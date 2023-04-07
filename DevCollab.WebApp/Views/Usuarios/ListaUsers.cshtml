@@ -1,0 +1,53 @@
+﻿@model IEnumerable<DevCollab.Domain.Entities.Usuario>
+
+@{
+    ViewData["Title"] = "ListaUsers";
+}
+
+<h1>Lista de Usuários</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nome
+            </th>
+            <th>
+                Foto
+            </th>
+            <th>
+                Descrição
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            @if (item.Id != ViewBag.Seguidor.Id)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nome)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CaminhoFotoPerfil)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Descricao)
+                    </td>
+                    <td>
+                        @if (ViewBag.Seguidos.Contains(item))
+                        {
+                            <a asp-controller="SeguidorSeguido" asp-action="Deletar" asp-route-id="@item.Id">Deixar de seguir</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="SeguidorSeguido" asp-action="Seguir" asp-route-id="@item.Id">Seguir</a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

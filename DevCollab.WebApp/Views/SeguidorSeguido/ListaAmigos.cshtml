@@ -1,0 +1,43 @@
+﻿@model IEnumerable<DevCollab.Domain.Entities.Usuario>
+
+@{
+    ViewData["Title"] = "ListaAmigos";
+}
+
+<h1>Lista de Amigos</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CaminhoFotoPerfil)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descricao)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CaminhoFotoPerfil)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descricao)
+                </td>
+                <td>
+                    <a asp-controller="SeguidorSeguido" asp-action="Deletar" asp-route-id="@item.Id">Deixar de seguir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
