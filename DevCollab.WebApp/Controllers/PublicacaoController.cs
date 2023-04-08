@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace DevCollab.WebApp.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class PublicacaoController : Controller
     {
         private readonly PublicacaoService _publicacaoService;
@@ -30,11 +30,7 @@ namespace DevCollab.WebApp.Controllers
         public IActionResult Create() {
             Guid autorId = GetUserId();
 
-            // Cria uma nova instância de Publicacao com o AutorId preenchido
             Publicacao publicacao = new Publicacao { AutorId = autorId };
-
-            // Adiciona a instância à ViewData para exibição na view
-            ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(autorId);
 
             return View(publicacao);
         }
@@ -45,13 +41,11 @@ namespace DevCollab.WebApp.Controllers
             if (ModelState.IsValid) {
                 Guid autorId = GetUserId();
 
-                // Preenche o AutorId com o id do autor logado
                 publicacao.AutorId = autorId;
 
                 _publicacaoService.CriarPublicacao(publicacao);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(publicacao.AutorId);
             return View(publicacao);
         }
 
@@ -101,10 +95,6 @@ namespace DevCollab.WebApp.Controllers
             if (publicacao == null) {
                 return NotFound();
             }
-			ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(publicacao.AutorId);
-            var autorNome = _publicacaoService.ObterAutorNome(publicacao.AutorId);
-            //não está retornando nome algum, precisa resolver
-            Console.WriteLine(autorNome);
             return View(publicacao);
         }
 
@@ -121,7 +111,6 @@ namespace DevCollab.WebApp.Controllers
             {
                 _publicacaoService.ExcluirPublicacao(publicacao);
             }
-			ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(publicacao.AutorId);
 			return RedirectToAction(nameof(Index));
         }
 

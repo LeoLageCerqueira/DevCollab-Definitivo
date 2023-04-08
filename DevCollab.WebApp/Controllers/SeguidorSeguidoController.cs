@@ -2,12 +2,14 @@
 using DevCollab.Domain.Services;
 using DevCollab.Infra.Context;
 using DevCollab.WebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace DevCollab.WebApp.Controllers
 {
+    [Authorize]
     public class SeguidorSeguidoController : Controller {
         private readonly SeguidorSeguidoService _seguidorSeguidoService;
 
