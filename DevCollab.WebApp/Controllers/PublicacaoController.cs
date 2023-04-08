@@ -16,11 +16,9 @@ namespace DevCollab.WebApp.Controllers
     //[Authorize]
     public class PublicacaoController : Controller
     {
-        private readonly DevCollabDbContext _context;
         private readonly PublicacaoService _publicacaoService;
 
-        public PublicacaoController(DevCollabDbContext context, PublicacaoService publicacaoService) {
-            _context = context;
+        public PublicacaoController(PublicacaoService publicacaoService) {
             _publicacaoService = publicacaoService;
         }
 
@@ -94,7 +92,7 @@ namespace DevCollab.WebApp.Controllers
 
 		public IActionResult Delete(int Id)
         {
-            if (Id == null || _publicacaoService.PublicacoesVazio())
+            if (_publicacaoService.PublicacoesVazio())
             {
                 return NotFound();
             }
