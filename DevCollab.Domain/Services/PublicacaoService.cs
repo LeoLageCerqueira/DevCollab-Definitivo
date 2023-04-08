@@ -19,18 +19,6 @@ namespace DevCollab.Domain.Services {
             return _publicacaoRepository.ObterTodasPublicacoes();
         }
 
-        public string ObterAutorNome(Guid autorId) {
-            // Chame o método no repositório para obter o autor pelo id
-            var autor = _publicacaoRepository.ObterAutorPorId(autorId);
-            // Verifique se o autor foi encontrado
-            if (autor != null && autor.Autor != null) {
-                // Retorne o nome do autor
-                return autor.Autor.Nome;
-            }
-            // Retorne uma string vazia caso o autor não tenha sido encontrado ou a propriedade Nome seja nula
-            return string.Empty;
-        }
-
         public bool CriarPublicacao(Publicacao publicacao) {
             int cont = _publicacaoRepository.Criar(publicacao);
             if (cont > 0) {

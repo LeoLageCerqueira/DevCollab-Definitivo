@@ -21,16 +21,8 @@ namespace DevCollab.Infra.Repositories {
             return _dbContext.Publicacoes.Include(p => p.Autor).ToList();
         }
 
-        public Publicacao ObterAutorPorId(Guid autorId) {
-            // Use o contexto de banco de dados (_dbContext) para buscar o autor pelo id
-            return _dbContext.Publicacoes.FirstOrDefault(a => a.AutorId == autorId);
-        }
-
         public int Criar(Publicacao publicacao) {
-            // Adicione a publicação ao contexto do banco de dados
             _dbContext.Add(publicacao);
-
-            // Salve as mudanças no banco de dados e retorne o número de registros afetados
             return _dbContext.SaveChanges();
         }
 

@@ -6,7 +6,6 @@ namespace DevCollab.Domain.Interfaces {
     public interface IPublicacaoRepository {
         
         List<Publicacao> ObterTodasPublicacoes();
-        Publicacao ObterAutorPorId(Guid autorId);
         public int Criar(Publicacao publicacao);
         public int Vazio();
         public Publicacao Consultar(int IdPublicacao);
