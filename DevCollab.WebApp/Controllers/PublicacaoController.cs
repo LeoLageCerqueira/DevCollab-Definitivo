@@ -23,7 +23,9 @@ namespace DevCollab.WebApp.Controllers
         }
 
         public IActionResult Index() {
+            Guid autorId = GetUserId();
             var publicacoes = _publicacaoService.ObterTodasPublicacoes();
+            ViewBag.autorId = autorId;
             return View(publicacoes);
         }
 

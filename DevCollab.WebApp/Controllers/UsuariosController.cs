@@ -19,13 +19,7 @@ namespace DevCollab.WebApp.Controllers
 		{
 			_service = service;
 		}
-		//public UsuariosController(UsuarioService service, SeguidorSeguidoService seguidorSeguidoService)
-  //      {
-  //          _service = service;
-  //          _seguidorSeguidoService = seguidorSeguidoService;
-  //      }
 
-        // GET: Usuarios
         public IActionResult Index()
         {
             Guid userId = GetUserId();
@@ -48,17 +42,7 @@ namespace DevCollab.WebApp.Controllers
 			ViewBag.Seguidos = seguidos;
 			return View(usuarioList);
         }
-        //public IActionResult Seguir(Guid SeguidorId, Guid SeguidoId)
-        //{
-        //    _seguidorSeguidoService.CriarRelacionamentoSeguidorSeguido(SeguidorId, SeguidoId);
-        //    return View();
-        //}
-        //public IActionResult Seguir()
-        //{
 
-        //}
-
-        // GET: Usuarios/Details/5
         public IActionResult Details(Guid? id)
         {
             if (_service.UsuariosVazio())
@@ -83,9 +67,6 @@ namespace DevCollab.WebApp.Controllers
             return View();
         }
 
-        // POST: Usuarios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Usuario usuario)
@@ -115,9 +96,6 @@ namespace DevCollab.WebApp.Controllers
             return View(usuario);
         }
 
-        // POST: Usuarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, Usuario usuario)
