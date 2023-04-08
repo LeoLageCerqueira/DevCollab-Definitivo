@@ -57,66 +57,74 @@ namespace DevCollab.WebApp.Controllers
             return View(publicacao);
         }
 
-        public IActionResult Edit(Guid? id) {
-            if (id == null || _publicacaoService.PublicacoesVazio()) {
-                return NotFound();
-            }
-
-            var publicacao = _publicacaoService.ConsultarPublicacao(id.Value);
-            if (publicacao == null) {
-                return NotFound();
-            }
+        public IActionResult Edit(int Id)
+		{
+            //if (IdPublicacao == null || _publicacaoService.PublicacoesVazio())
+            //{
+            //    return NotFound();
+            //}
+            Console.WriteLine(Id);
+			var publicacao = _publicacaoService.ConsultarPublicacao(Id);
+            //if (publicacao == null) {
+            //    return NotFound();
+            //}
             return View(publicacao);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Publicacao publicacao)
+        public IActionResult Edit(int Id, Publicacao publicacao)
         {
-            if (id != publicacao.IdPublicacao) {
+            if (Id != publicacao.IdPublicacao) {
                 return NotFound();
             }
 
             if (ModelState.IsValid) {
+                Guid autorId = GetUserId();
+                publicacao.AutorId = autorId;
+                Console.WriteLine(autorId);
                 bool result = _publicacaoService.AlterarPublicacao(publicacao);
                 if (!result) {
                     return NotFound();
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(publicacao);
+			return View(publicacao);
         }
 
-        // GET: Publicacao/Delete/5
-        public IActionResult Delete(Guid? id)
+		public IActionResult Delete(int Id)
         {
-            if (id == null || _publicacaoService.PublicacoesVazio())
+            if (Id == null || _publicacaoService.PublicacoesVazio())
             {
                 return NotFound();
             }
 
-            var publicacao = _publicacaoService.ConsultarPublicacao(id.Value);
+            var publicacao = _publicacaoService.ConsultarPublicacao(Id);
             if (publicacao == null) {
                 return NotFound();
             }
+			ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(publicacao.AutorId);
+            var autorNome = _publicacaoService.ObterAutorNome(publicacao.AutorId);
+            //não está retornando nome algum, precisa resolver
+            Console.WriteLine(autorNome);
             return View(publicacao);
         }
 
-        // POST: Publicacao/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(int IdPublicacao)
         {
             if (_publicacaoService.PublicacoesVazio())
             {
                 return Problem("Entity set 'DevCollabDbContext.Publicacoes'  is null.");
             }
-            var publicacao = _publicacaoService.ConsultarPublicacao(id);
+            var publicacao = _publicacaoService.ConsultarPublicacao(IdPublicacao);
             if (publicacao != null)
             {
                 _publicacaoService.ExcluirPublicacao(publicacao);
             }
-            return RedirectToAction(nameof(Index));
+			ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(publicacao.AutorId);
+			return RedirectToAction(nameof(Index));
         }
 
         private Guid GetUserId() {

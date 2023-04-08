@@ -9,7 +9,7 @@ namespace DevCollab.Domain.Interfaces {
         Publicacao ObterAutorPorId(Guid autorId);
         public int Criar(Publicacao publicacao);
         public int Vazio();
-        public Publicacao Consultar(Guid id);
+        public Publicacao Consultar(int IdPublicacao);
         public int Alterar(Publicacao publicacao);
         public int Excluir(Publicacao publicacao);
     }

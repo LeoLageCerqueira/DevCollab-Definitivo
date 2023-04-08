@@ -58,6 +58,10 @@ app.MapControllerRoute(
 	name: "relacionamento",
 	pattern: "{controller=SeguidorSeguido}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+	name: "publicacao",
+	pattern: "{controller=Publicacao}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
 app.Run();

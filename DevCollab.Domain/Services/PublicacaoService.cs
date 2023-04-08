@@ -47,8 +47,9 @@ namespace DevCollab.Domain.Services {
             return false;
         }
 
-        public Publicacao ConsultarPublicacao(Guid id) {
-            return _publicacaoRepository.Consultar(id);
+        public Publicacao ConsultarPublicacao(int IdPublicacao)
+		{
+            return _publicacaoRepository.Consultar(IdPublicacao);
         }
 
         public bool AlterarPublicacao(Publicacao publicacao) {

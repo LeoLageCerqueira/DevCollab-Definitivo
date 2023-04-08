@@ -39,9 +39,10 @@ namespace DevCollab.Infra.Repositories {
             return cont;
         }
 
-        public Publicacao Consultar(Guid id) {
+        public Publicacao Consultar(int IdPublicacao)
+		{
             try {
-                return _dbContext.Publicacoes.Find(id);
+                return _dbContext.Publicacoes.Find(IdPublicacao);
             }
             catch (Exception) {
                 return null;
