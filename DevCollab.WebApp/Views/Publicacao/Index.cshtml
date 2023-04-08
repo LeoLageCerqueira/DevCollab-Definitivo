@@ -30,10 +30,12 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Autor.Nome)
                 </td>
-                <td>
-                    <a asp-controller="Publicacao" asp-action="Edit" asp-route-id="@item.IdPublicacao">Editar</a>
-                    <a asp-controller="Publicacao" asp-action="Delete" asp-route-id="@item.IdPublicacao">Deletar</a>
-                </td>
+                @if (item.AutorId == ViewBag.AutorId) {
+                    <td>
+                        <a asp-controller="Publicacao" asp-action="Edit" asp-route-id="@item.IdPublicacao">Editar</a>
+                        <a asp-controller="Publicacao" asp-action="Delete" asp-route-id="@item.IdPublicacao">Deletar</a>
+                    </td>
+                }             
             </tr>
         }
     </tbody>
