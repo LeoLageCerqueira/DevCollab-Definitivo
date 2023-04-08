@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace DevCollab.WebApp.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class PublicacaoController : Controller
     {
         private readonly PublicacaoService _publicacaoService;
@@ -34,7 +34,7 @@ namespace DevCollab.WebApp.Controllers
             Publicacao publicacao = new Publicacao { AutorId = autorId };
 
             // Adiciona a instância à ViewData para exibição na view
-            ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(autorId);
+            //ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(autorId);
 
             return View(publicacao);
         }
@@ -51,21 +51,15 @@ namespace DevCollab.WebApp.Controllers
                 _publicacaoService.CriarPublicacao(publicacao);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(publicacao.AutorId);
+            //ViewData["AutorNome"] = _publicacaoService.ObterAutorNome(publicacao.AutorId);
             return View(publicacao);
         }
 
         public IActionResult Edit(int Id)
 		{
-            //if (IdPublicacao == null || _publicacaoService.PublicacoesVazio())
-            //{
-            //    return NotFound();
-            //}
             Console.WriteLine(Id);
+
 			var publicacao = _publicacaoService.ConsultarPublicacao(Id);
-            //if (publicacao == null) {
-            //    return NotFound();
-            //}
             return View(publicacao);
         }
 
@@ -96,7 +90,6 @@ namespace DevCollab.WebApp.Controllers
             {
                 return NotFound();
             }
-
             var publicacao = _publicacaoService.ConsultarPublicacao(Id);
             if (publicacao == null) {
                 return NotFound();
