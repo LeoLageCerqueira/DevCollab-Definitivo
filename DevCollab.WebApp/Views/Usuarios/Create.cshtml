@@ -19,7 +19,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CaminhoFotoPerfil" class="control-label">Foto</label>
-                <input asp-for="CaminhoFotoPerfil" class="form-control" />
+                <input type="file" asp-for="CaminhoFotoPerfil" class="form-control" accept="image/png, .jpeg, .jpg" />
                 <span asp-validation-for="CaminhoFotoPerfil" class="text-danger"></span>
             </div>
             <div class="form-group">

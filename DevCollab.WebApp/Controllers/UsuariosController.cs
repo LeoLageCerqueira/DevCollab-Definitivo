@@ -5,6 +5,9 @@ using DevCollab.Infra.Context;
 using DevCollab.Domain.Services;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Azure.Storage.Blobs;
 
 namespace DevCollab.WebApp.Controllers
 {
@@ -13,9 +16,10 @@ namespace DevCollab.WebApp.Controllers
     public class UsuariosController : Controller
     {
         private readonly UsuarioService _service;
-        //private readonly SeguidorSeguidoService _seguidorSeguidoService;
+        private const string connectionString = @"DefaultEndpointsProtocol=https;AccountName=storage4pb;AccountKey=yl2aPSDz28eDjMoNH1YBVZQ05jaZTz6Dx/GLkaUFyWvHxODfTnn+3V8zBIe77gHm3qf0cYmAGZ0h+AStjQwhlA==;EndpointSuffix=core.windows.net";
+        private const string containerName = "pbteste";
 
-		public UsuariosController(UsuarioService service)
+        public UsuariosController(UsuarioService service)
 		{
 			_service = service;
 		}
@@ -69,15 +73,30 @@ namespace DevCollab.WebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Usuario usuario)
-        {
+        public async Task<IActionResult> Create(Usuario usuario, IFormFile CaminhoFotoPerfil) {
             if (ModelState.IsValid)
             {
                 usuario.Id = GetUserId();
+                if (CaminhoFotoPerfil != null) {
+                    string uri = await UploadImage(CaminhoFotoPerfil);
+                    usuario.CaminhoFotoPerfil = uri;
+                }
                 _service.CriarUsuario(usuario);
                 return RedirectToAction(nameof(Index));
             }
             return View(usuario);
+        }
+
+        private static async Task<string> UploadImage(IFormFile imageFile) {
+
+            var reader = imageFile.OpenReadStream();
+            var cloundStorageAccount = CloudStorageAccount.Parse(connectionString);
+            var blobClient = cloundStorageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference(containerName);
+            await container.CreateIfNotExistsAsync();
+            CloudBlockBlob blob = container.GetBlockBlobReference(imageFile.FileName);
+            await blob.UploadFromStreamAsync(reader);
+            return blob.Uri.ToString();
         }
 
         // GET: Usuarios/Edit/5
@@ -98,7 +117,7 @@ namespace DevCollab.WebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, Usuario usuario)
+        public async Task<IActionResult> Edit(Guid id, Usuario usuario, IFormFile CaminhoFotoPerfil)
         {
             if (id != usuario.Id)
             {
@@ -107,6 +126,7 @@ namespace DevCollab.WebApp.Controllers
 
             if (ModelState.IsValid)
             {
+                usuario.CaminhoFotoPerfil = await UploadImage(CaminhoFotoPerfil); //erro
                 bool result = _service.AlterarUsuario(usuario);
                 if (!result) {
                     return NotFound(); 
@@ -145,9 +165,22 @@ namespace DevCollab.WebApp.Controllers
             var usuario = _service.ConsultarUsuario(id);
             if (usuario != null)
             {
+                DeleteFoto(usuario.CaminhoFotoPerfil);
                 _service.ExcluirUsuario(usuario);
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        private static void DeleteFoto(string foto) {
+
+            if (foto != null) {
+                try {
+                    string nomeArquivo = foto.Split("/" + containerName + "/")[1];
+                    var blobClient = new BlobClient(connectionString, containerName, nomeArquivo);
+                    blobClient.Delete();
+                }
+                catch { }
+            }
         }
 
         private Guid GetUserId() {
