@@ -10,13 +10,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Nome)
+                Nome
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CaminhoFotoPerfil)
+                Foto
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Descricao)
+                Descrição
             </th>
             <th></th>
         </tr>
@@ -29,7 +29,7 @@
                     @Html.DisplayFor(modelItem => item.Nome)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CaminhoFotoPerfil)
+                    <img src="@Html.DisplayFor(modelItem => item.CaminhoFotoPerfil)" style="max-width:350px; height:auto" />
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Descricao)
