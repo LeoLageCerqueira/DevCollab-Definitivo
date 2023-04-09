@@ -20,6 +20,11 @@ namespace DevCollab.Infra.Repositories {
         public List<Publicacao> ObterTodasPublicacoes() {
             return _dbContext.Publicacoes.Include(p => p.Autor).ToList();
         }
+        //public List<Publicacao> FiltrarPublicacoesParaFeed()
+        //{
+        //    List<Publicacao> publicacoesAll = ObterTodasPublicacoes();
+        //    List<Publicacao> publicacoesFeed = publicacoesAll.Select(p => ) 
+        //}
 
         public int Criar(Publicacao publicacao) {
             _dbContext.Add(publicacao);

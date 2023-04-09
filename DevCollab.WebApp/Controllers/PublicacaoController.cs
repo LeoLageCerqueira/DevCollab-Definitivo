@@ -17,17 +17,35 @@ namespace DevCollab.WebApp.Controllers
     public class PublicacaoController : Controller
     {
         private readonly PublicacaoService _publicacaoService;
+        private readonly SeguidorSeguidoService _seguidorSeguidoService;
 
-        public PublicacaoController(PublicacaoService publicacaoService) {
+        public PublicacaoController(PublicacaoService publicacaoService, SeguidorSeguidoService seguidorSeguidoService) {
             _publicacaoService = publicacaoService;
+            _seguidorSeguidoService = seguidorSeguidoService;
         }
 
         public IActionResult Index() {
             Guid autorId = GetUserId();
-            var publicacoes = _publicacaoService.ObterTodasPublicacoes();
-            ViewBag.autorId = autorId;
-            return View(publicacoes);
+            List<Publicacao> publicacoesFeed = PublicacoesFeed();
+			ViewBag.autorId = autorId;
+            return View(publicacoesFeed);
         }
+
+        public List<Publicacao> PublicacoesFeed()
+        {
+			Guid autorId = GetUserId();
+			Usuario seguidor = ObterPorId(autorId);
+
+			List<Usuario> usuariosSeguidos = _seguidorSeguidoService.ObterSeguidosPorSeguidorId(autorId);
+            usuariosSeguidos.Add(seguidor);
+			List<Publicacao> publicacoesAll = _publicacaoService.ObterTodasPublicacoes();
+			List<Publicacao> publicacoesFeed = new List<Publicacao>();
+			foreach (Usuario usuario in usuariosSeguidos)
+			{
+				publicacoesFeed.AddRange(publicacoesAll.Where(p => p.Autor == usuario));
+			}
+            return publicacoesFeed;
+		}
 
         public IActionResult Create() {
             Guid autorId = GetUserId();
@@ -119,5 +137,9 @@ namespace DevCollab.WebApp.Controllers
         private Guid GetUserId() {
             return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         }
-    }
+		public Usuario ObterPorId(Guid id)
+		{
+			return _seguidorSeguidoService.ObterClicadoPorId(id);
+		}
+	}
 }
