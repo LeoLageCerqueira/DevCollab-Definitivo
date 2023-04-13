@@ -10,12 +10,12 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IdPublicacao" />
             <div class="form-group">
                 <label asp-for="Texto" class="control-label"></label>
-                <input asp-for="Texto" class="form-control" />
+                <input type="file" asp-for="Texto" class="form-control" accept="image/png, .jpeg, .jpg" />
                 <span asp-validation-for="Texto" class="text-danger"></span>
             </div>
             @*<div class="form-group">

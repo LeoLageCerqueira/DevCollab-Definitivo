@@ -10,6 +10,9 @@ using DevCollab.Domain.Services;
 using DevCollab.Infra.Context;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage;
+using Azure.Storage.Blobs;
 
 namespace DevCollab.WebApp.Controllers
 {
@@ -18,6 +21,8 @@ namespace DevCollab.WebApp.Controllers
     {
         private readonly PublicacaoService _publicacaoService;
         private readonly SeguidorSeguidoService _seguidorSeguidoService;
+        private const string connectionString = @"DefaultEndpointsProtocol=https;AccountName=storage4pb;AccountKey=yl2aPSDz28eDjMoNH1YBVZQ05jaZTz6Dx/GLkaUFyWvHxODfTnn+3V8zBIe77gHm3qf0cYmAGZ0h+AStjQwhlA==;EndpointSuffix=core.windows.net";
+        private const string containerName = "pbteste";
 
         public PublicacaoController(PublicacaoService publicacaoService, SeguidorSeguidoService seguidorSeguidoService) {
             _publicacaoService = publicacaoService;
@@ -50,23 +55,40 @@ namespace DevCollab.WebApp.Controllers
         public IActionResult Create() {
             Guid autorId = GetUserId();
 
-            Publicacao publicacao = new Publicacao { AutorId = autorId };
+            Publicacao publicacao = new()
+            { AutorId = autorId };
 
             return View(publicacao);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Publicacao publicacao) {
+        public async Task<IActionResult> Create(Publicacao publicacao, IFormFile Texto) {
             if (ModelState.IsValid) {
                 Guid autorId = GetUserId();
 
                 publicacao.AutorId = autorId;
+                if (Texto != null) {
+                    string uri = await UploadImage(Texto);
+                    publicacao.Texto = uri;
+                }
 
                 _publicacaoService.CriarPublicacao(publicacao);
                 return RedirectToAction(nameof(Index));
             }
             return View(publicacao);
+        }
+
+        private static async Task<string> UploadImage(IFormFile imageFile) {
+
+            var reader = imageFile.OpenReadStream();
+            var cloundStorageAccount = CloudStorageAccount.Parse(connectionString);
+            var blobClient = cloundStorageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference(containerName);
+            await container.CreateIfNotExistsAsync();
+            CloudBlockBlob blob = container.GetBlockBlobReference(imageFile.FileName);
+            await blob.UploadFromStreamAsync(reader);
+            return blob.Uri.ToString();
         }
 
         public IActionResult Edit(int Id)
@@ -85,7 +107,7 @@ namespace DevCollab.WebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int Id, Publicacao publicacao)
+        public async Task<IActionResult> Edit(int Id, Publicacao publicacao, IFormFile Texto)
         {
             if (Id != publicacao.IdPublicacao) {
                 return NotFound();
@@ -94,7 +116,7 @@ namespace DevCollab.WebApp.Controllers
             if (ModelState.IsValid) {
                 Guid autorId = GetUserId();
                 publicacao.AutorId = autorId;
-                Console.WriteLine(autorId);
+                publicacao.Texto = await UploadImage(Texto);
                 bool result = _publicacaoService.AlterarPublicacao(publicacao);
                 if (!result) {
                     return NotFound();
@@ -129,9 +151,22 @@ namespace DevCollab.WebApp.Controllers
             var publicacao = _publicacaoService.ConsultarPublicacao(IdPublicacao);
             if (publicacao != null)
             {
+                DeleteFoto(publicacao.Texto);
                 _publicacaoService.ExcluirPublicacao(publicacao);
             }
 			return RedirectToAction(nameof(Index));
+        }
+
+        private static void DeleteFoto(string foto) {
+
+            if (foto != null) {
+                try {
+                    string nomeArquivo = foto.Split("/" + containerName + "/")[1];
+                    var blobClient = new BlobClient(connectionString, containerName, nomeArquivo);
+                    blobClient.Delete();
+                }
+                catch { }
+            }
         }
 
         private Guid GetUserId() {

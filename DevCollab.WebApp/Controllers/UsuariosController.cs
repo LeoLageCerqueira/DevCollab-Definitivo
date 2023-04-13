@@ -126,7 +126,7 @@ namespace DevCollab.WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                usuario.CaminhoFotoPerfil = await UploadImage(CaminhoFotoPerfil); //erro
+                usuario.CaminhoFotoPerfil = await UploadImage(CaminhoFotoPerfil); 
                 bool result = _service.AlterarUsuario(usuario);
                 if (!result) {
                     return NotFound(); 
